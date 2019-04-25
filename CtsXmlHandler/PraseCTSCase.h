@@ -226,7 +226,9 @@ void praseXml(string ctsTestResultFile, bool isOrgXml) {
 		}
 		if (isOrgXml == false) {
 			if (orgline.find("Test result=\"pass\"", 0) != string::npos) {
+				Test = mCtsTool.cutOutString(orgline, "\"", 2, 1, "\"", 3, 0, 0); //cout << "orgline: " << orgline << endl;
 				testCase = moudleName + " " + TestCase + "#" + Test;
+				//cout << testCase << endl;
 				owner = praseOwner(testCase);
 				ctrData tmpCtrData(testCase, "", "", owner, "");
 				if (isNewTestCase(mCtsBox.vectCprData, testCase))
@@ -294,6 +296,7 @@ void buildXmlBody(ofstream &ctrOFS) {
 		for (vcdItor vpcdit = mCtsBox.vectCprData.begin();
 				vpcdit != mCtsBox.vectCprData.end(); ++vpcdit) {
 			if ((*vtcdit).mTestCase == (*vpcdit).mTestCase) {
+				//cout << "one more pass: " << (*vpcdit).mTestCase << endl;
 				passNow = true;
 				break;
 			}
