@@ -210,6 +210,7 @@ void praseXml(string ctsTestResultFile, bool isOrgXml) {
 			keep = false;
 			testCase = moudleName + " " + TestCase + "#" + Test;
 			owner = praseOwner(testCase);
+			addon = "run cts -m " + moudleName + " -t " + TestCase + "#" + Test + " --skip-preconditions";
 			ctrData tmpCtrData(testCase, path, errMsg, owner, addon);
 			if (isOrgXml == false) {
 				if (isNewTestCase(mCtsBox.vectCfrData, testCase)) {
