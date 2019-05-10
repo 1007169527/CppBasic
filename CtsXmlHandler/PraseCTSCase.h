@@ -21,6 +21,8 @@ typedef vector<std::string>::iterator stringItor;
 #define STEP1 1
 #define STEP2 2
 #define STEP3 3
+#define OWNER 1
+#define ADDON 2
 
 class ctsTool {
 public:
@@ -102,9 +104,11 @@ class c2mData {
 public:
 	string mTestCase;
 	string mOwner;
-	c2mData(string testCase, string owner) {
+	string mAddon;
+	c2mData(string testCase, string owner, string addon) {
 		mTestCase = testCase;
 		mOwner = owner;
+		mAddon = addon;
 	}
 };
 typedef vector<c2mData>::iterator vc2mItor;
@@ -134,17 +138,32 @@ void feedXml(ctrData tmpCtrData, ofstream &ctsOFS) {
 	ctsOFS << "</Row>";
 }
 
-string praseOwner(string testCase) {
-	for (vc2mItor vc2mit = mCtsBox.vectC2mData.begin();
-			vc2mit != mCtsBox.vectC2mData.end(); ++vc2mit) {
+string praseMessage(string testCase, int messageType) {
+	for (vc2mItor vc2mit = mCtsBox.vectC2mData.begin(); vc2mit != mCtsBox.vectC2mData.end(); ++vc2mit) {
 		if ((*vc2mit).mTestCase.compare(testCase) == 0) {
-			if ((*vc2mit).mOwner.length() != 0)
+			if (messageType == OWNER) {
+				if ((*vc2mit).mOwner.length() != 0)
 				return (*vc2mit).mOwner;
-			else
+				else
 				return "‘›Œ¥∑÷≈‰";
+			}
+			if (messageType == ADDON) {
+				if ((*vc2mit).mAddon.length() != 0)
+				return (*vc2mit).mAddon;
+				else
+				return "";
+			}
 		}
 	}
 	return "";
+}
+
+string praseOwner(string testCase) {
+	return praseMessage(testCase, OWNER);
+}
+
+string praseAddon(string testCase) {
+	return praseMessage(testCase, ADDON);
 }
 
 bool isNewTestCase(vector<ctrData> &vectCtrData, string testCase) {
@@ -210,7 +229,11 @@ void praseXml(string ctsTestResultFile, bool isOrgXml) {
 			keep = false;
 			testCase = moudleName + " " + TestCase + "#" + Test;
 			owner = praseOwner(testCase);
-			addon = "run cts -m " + moudleName + " -t " + TestCase + "#" + Test + " --skip-preconditions";
+			addon = praseAddon(testCase);
+			//cout << testCase << addon << endl;
+			if(addon != "waived")
+			  addon = "run cts -m " + moudleName + " -t " + TestCase + "#" + Test + " --skip-preconditions";
+			//cout << Test << endl;
 			ctrData tmpCtrData(testCase, path, errMsg, owner, addon);
 			if (isOrgXml == false) {
 				if (isNewTestCase(mCtsBox.vectCfrData, testCase)) {
@@ -229,8 +252,7 @@ void praseXml(string ctsTestResultFile, bool isOrgXml) {
 				Test = mCtsTool.cutOutString(orgline, "\"", 2, 1, "\"", 3, 0, 0); //cout << "orgline: " << orgline << endl;
 				testCase = moudleName + " " + TestCase + "#" + Test;
 				//cout << testCase << endl;
-				owner = praseOwner(testCase);
-				ctrData tmpCtrData(testCase, "", "", owner, "");
+				ctrData tmpCtrData(testCase, "", "", "", "");
 				if (isNewTestCase(mCtsBox.vectCprData, testCase))
 					mCtsBox.vectCprData.push_back(tmpCtrData);
 			}
@@ -252,21 +274,23 @@ bool testCaseSort(ctrData c1, ctrData c2) {
 
 void praseC2mXml(ifstream &c2mIFS) {
 	static string orgLineLast;
-	string orgLine, testCase, owner;
-	int loopMax = 1, cnt = 0;
+	string orgLine, testCase, owner, addon;
+	int loopMax = 2, cnt = 0;
 	while (getline(c2mIFS, orgLine)) {
+		if (orgLine.find("<Row", 0) != string::npos)
+			cnt = 0;
 		if (orgLine.find("<Data", 0) != string::npos) {
 			if (cnt == 0)
-				testCase = mCtsTool.cutOutString(orgLine, ">", 0, 1, "<", 1, 0,
-						0);
+				testCase = mCtsTool.cutOutString(orgLine, ">", 0, 1, "<", 1, 0, 0);
 			if (cnt == 1)
 				owner = mCtsTool.cutOutString(orgLine, ">", 0, 1, "<", 1, 0, 0);
+			if (cnt == 2)
+				addon = mCtsTool.cutOutString(orgLine, ">", 0, 1, "<", 1, 0, 0);
 			++cnt;
 			if (cnt > loopMax) {
-				cnt = 0;
-				c2mData tmpC2mData(testCase, owner);
+				c2mData tmpC2mData(testCase, owner, addon);
 				mCtsBox.vectC2mData.push_back(tmpC2mData);
-				//cout << "testCase is " << testCase << " owner is " << owner << endl;
+				//cout << "testCase is " << testCase << " owner is " << owner << " addon is " << addon << endl;
 			}
 		}
 	}

@@ -57,19 +57,26 @@ int checkArgs(int argc, char *argv[]) {
 }
 
 int main(int argc, char *argv[]) {
-	if (checkArgs(argc, argv) != 0)
-		return -1;
+	//if (checkArgs(argc, argv) != 0)
+	//	return -1;
 	cout << "enter main" << endl;
+	/*
 	ifstream ctrIFS(argv[1]); //"F:\\LinkToDesktop\\base.xml"
 	ifstream c2mIFS(argv[2]); //"F:\\LinkToDesktop\\c2m.xml"
 	ofstream ctrOFS(argv[5]); //"F:\\LinkToDesktop\\new.xml"
+	*/
+	ifstream ctrIFS("F:\\LinkToDesktop\\base.xml"); //"F:\\LinkToDesktop\\base.xml"
+	ifstream c2mIFS("F:\\LinkToDesktop\\c2m.xml"); //"F:\\LinkToDesktop\\c2m.xml"
+	ofstream ctrOFS("F:\\LinkToDesktop\\new.xml"); //"F:\\LinkToDesktop\\new.xml"
 	vector<string> specFiles;
-	mFilterFileTool.listFiles(argv[3]); //"F:\\LinkToDesktop\\0416"
+	//mFilterFileTool.listFiles(argv[3]); //"F:\\LinkToDesktop\\0416"
+	mFilterFileTool.listFiles("F:\\LinkToDesktop\\null"); //"F:\\LinkToDesktop\\0416"
 	mFilterFileTool.filterSpecFiles(specFiles, ".xml");
 	//STEP1
 	praseC2mXml(c2mIFS);
 	buildXmlHead(ctrIFS, ctrOFS);
-	praseOrgXml(argv[4]);//"F:\\LinkToDesktop\\2019.03.21_09.44.20\\test_result.xml"
+	//praseOrgXml(argv[4]);//"F:\\LinkToDesktop\\2019.03.21_09.44.20\\test_result.xml"
+	praseOrgXml("C:\\Users\\10071\\Documents\\google_report\\cts\\test_result.xml");//"F:\\LinkToDesktop\\2019.03.21_09.44.20\\test_result.xml"
 	//STEP2
 	for (stringItor sfit = specFiles.begin(); sfit != specFiles.end(); ++sfit) { //cout << "now prase " << *sfit << endl;
 		praseSubXml(*sfit);
