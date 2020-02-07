@@ -21,8 +21,6 @@ void matchChar() {
 		specCharAddon = 'a' - 'A';
 	if (specChar >= 'a' && specChar <= 'z')
 		specCharAddon = 'A' - 'a';
-
-	cout << specChar + specCharAddon << endl;
 	for (index = 0; index <= line.length() - 1; ++index) {
 		if (line.at(index) == specChar
 				|| line.at(index) == specChar + specCharAddon)
