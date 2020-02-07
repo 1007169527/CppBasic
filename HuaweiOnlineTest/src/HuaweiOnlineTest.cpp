@@ -1,5 +1,32 @@
 #include <iostream>
+#include <vector>
 using namespace std;
+
+/**
+ * 题目描述
+ 计算字符串最后一个单词的长度，单词以空格隔开。
+ 输入描述:
+ 一行字符串，非空，长度小于5000。
+ 输出描述:
+ 整数N，最后一个单词的长度。
+ */
+void countLastWord() {
+	vector<string> lines;
+	string line;
+	string word;
+	int index;
+	int count;
+	while (getline(cin, line)) {
+		for (index = 0; index <= line.length() - 1; ++index) {
+			if (line.at(index) == ' ') {
+				count = 0;
+				continue;
+			}
+			++count;
+		}
+	}
+	cout << count << endl;
+}
 
 /**
  * 题目描述
@@ -29,7 +56,40 @@ void matchChar() {
 	cout << count << endl;
 }
 
+void matchCharNeedToFix() {
+	string line;
+	char specChar;
+	int specCharAddon = 0;
+	int index;
+	int count;
+	cin >> line;
+	cin >> specChar;
+	if (specChar >= 'A' && specChar <= 'Z')
+		specCharAddon = 'a' - 'A';
+	if (specChar >= 'a' && specChar <= 'z')
+		specCharAddon = 'A' - 'a';
+	for (index = 0; index <= line.length();) {
+		index = line.find(specChar + specCharAddon, index);
+		if (index != string::npos) {
+			++count;
+			++index;
+		} else
+			break;
+	}
+	for (index = 0; index <= line.length();) {
+		index = line.find(specChar, index);
+		if (index != string::npos) {
+			++count;
+			++index;
+		} else
+			break;
+	}
+	cout << count << endl;
+}
+
 int main() {
-	matchChar();
+	//matchChar();
+	countLastWord();
 	return 0;
 }
+
